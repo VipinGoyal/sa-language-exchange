@@ -1,56 +1,85 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { LanguageFeatureCard } from "@/components/language-feature-card"
-import { HeroSection } from "@/components/hero-section"
+"use client"
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { LanguagePartnerCard } from "@/components/language-partner-card"
+import { UpcomingSessionCard } from "@/components/upcoming-session-card"
+import { useSessions } from "@/components/session-context"
+
+// Mock data for demonstration
+const partners = [
+  {
+    id: "1",
+    name: "Maria Rodriguez",
+    nativeLanguage: "Spanish",
+    learningLanguage: "English",
+    rating: 4.8,
+    availability: "Evenings & Weekends",
+  },
+  {
+    id: "2",
+    name: "Hiroshi Tanaka",
+    nativeLanguage: "Japanese",
+    learningLanguage: "English",
+    rating: 4.9,
+    availability: "Mornings",
+  },
+  {
+    id: "3",
+    name: "Sophie Dubois",
+    nativeLanguage: "French",
+    learningLanguage: "German",
+    rating: 4.7,
+    availability: "Weekends",
+  },
+  {
+    id: "4",
+    name: "Li Wei",
+    nativeLanguage: "Mandarin",
+    learningLanguage: "English",
+    rating: 4.6,
+    availability: "Evenings",
+  },
+]
 
 export default function Home() {
+  const { upcomingSessions } = useSessions()
+
   return (
-    <div className="flex flex-col gap-12 pb-8">
-      <HeroSection />
+    <div className="container py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+      </div>
 
-      <section className="container py-8">
-        <div className="flex flex-col items-center justify-center text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">How It Works</h2>
-          <p className="mt-4 max-w-[85%] text-muted-foreground">
-            Connect with native speakers around the world and practice your language skills through conversation.
-          </p>
-        </div>
-
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <LanguageFeatureCard
-            title="Find Language Partners"
-            description="Search for native speakers of your target language who want to learn your native language."
-            icon="Users"
-          />
-          <LanguageFeatureCard
-            title="Schedule Sessions"
-            description="Book conversation practice sessions at times that work for both of you."
-            icon="Calendar"
-          />
-          <LanguageFeatureCard
-            title="Exchange Messages"
-            description="Chat with your language partners to coordinate and build rapport."
-            icon="MessageSquare"
-          />
-        </div>
-      </section>
-
-      <section className="container py-8 bg-muted/50 rounded-lg">
-        <div className="flex flex-col items-center justify-center gap-6 text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Ready to start practicing?</h2>
-          <p className="max-w-[85%] text-muted-foreground">
-            Join thousands of language learners already improving their skills through conversation.
-          </p>
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <Button asChild size="lg">
-              <Link href="/register">Sign Up Free</Link>
-            </Button>
-            <Button variant="outline" size="lg" asChild>
-              <Link href="/about">Learn More</Link>
-            </Button>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Language Partners Section - Takes full width on mobile/tablet, 2/3 on desktop */}
+        <div className="lg:col-span-2 space-y-6">
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Recommended Language Partners</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {partners.map((partner) => (
+                <LanguagePartnerCard key={partner.id} partner={partner} />
+              ))}
+            </div>
           </div>
         </div>
-      </section>
+
+        {/* Upcoming Sessions Section - Takes full width on mobile, 1/3 on desktop */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Upcoming Sessions</CardTitle>
+              <CardDescription>Your scheduled language practice sessions</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              {upcomingSessions.length > 0 ? (
+                upcomingSessions.map((session) => <UpcomingSessionCard key={session.id} session={session} />)
+              ) : (
+                <p className="text-muted-foreground text-center py-4">No upcoming sessions</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   )
 }

@@ -5,37 +5,24 @@ import { useState } from "react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
+import { useMessages } from "./message-context"
 
-interface Conversation {
-  id: string
-  user: {
-    id: string
-    name: string
-    avatarUrl?: string
-    status: "online" | "offline"
-  }
-  lastMessage: {
-    text: string
-    timestamp: string
-    isRead: boolean
-  }
-}
-
-interface MessageListProps {
-  conversations: Conversation[]
-  activeConversationId: string
-}
-
-export function MessageList({ conversations, activeConversationId }: MessageListProps) {
+export function MessageList() {
+  const { conversations, activeConversationId, setActiveConversationId, markConversationAsRead } = useMessages()
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredConversations = conversations.filter((conversation) =>
     conversation.user.name.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
+  const handleConversationClick = (conversationId: string) => {
+    setActiveConversationId(conversationId)
+    markConversationAsRead(conversationId)
+  }
+
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b">
+      <div className="p-4 border-b shrink-0">
         <div className="relative">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -72,6 +59,7 @@ export function MessageList({ conversations, activeConversationId }: MessageList
                     className={`flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors ${
                       isActive ? "bg-muted" : ""
                     }`}
+                    onClick={() => handleConversationClick(conversation.id)}
                   >
                     <div className="relative">
                       <Avatar>

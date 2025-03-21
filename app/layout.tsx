@@ -5,6 +5,8 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { Navigation } from "@/components/navigation"
+import { SessionProvider } from "@/components/session-context"
+import { MessageProvider } from "@/components/message-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,18 +25,22 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen bg-background`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <div className="flex min-h-screen flex-col">
-            <Navigation />
-            <main className="flex-1">{children}</main>
-            <footer className="border-t py-6">
-              <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
-                <p className="text-center text-sm text-muted-foreground md:text-left">
-                  &copy; {new Date().getFullYear()} Language Exchange. All rights reserved.
-                </p>
+          <SessionProvider>
+            <MessageProvider>
+              <div className="flex min-h-screen flex-col">
+                <Navigation />
+                <main className="flex-1">{children}</main>
+                <footer className="border-t py-6">
+                  <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
+                    <p className="text-center text-sm text-muted-foreground md:text-left">
+                      &copy; {new Date().getFullYear()} Language Exchange. All rights reserved.
+                    </p>
+                  </div>
+                </footer>
               </div>
-            </footer>
-          </div>
-          <Toaster />
+              <Toaster />
+            </MessageProvider>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>
