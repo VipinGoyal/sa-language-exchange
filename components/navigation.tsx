@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription, SheetHeader } from "@/components/ui/sheet"
 import { MessageSquare, Calendar, User, Menu } from "lucide-react"
 
 const routes = [
@@ -64,6 +64,10 @@ export function Navigation() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right">
+              <SheetHeader>
+                <SheetTitle>Navigation Menu</SheetTitle>
+                <SheetDescription>Access the main navigation options for Language Exchange.</SheetDescription>
+              </SheetHeader>
               <div className="flex flex-col gap-4 py-4">
                 <Link href="/" className="flex items-center space-x-2" onClick={() => setOpen(false)}>
                   <span className="font-bold text-xl">Language Exchange</span>
