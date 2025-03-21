@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useSessions } from "./session-context"
-import { useToast } from "@/components/ui/use-toast"
+import { useCustomToast } from "./custom-toast"
 
 // Get today's date in YYYY-MM-DD format for validation
 const today = new Date().toISOString().split("T")[0]
@@ -43,7 +43,7 @@ export function ScheduleSessionForm({ partnerId, partnerName, language }: Schedu
   const router = useRouter()
   const { addSession } = useSessions()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { toast } = useToast()
+  const { showToast } = useCustomToast()
 
   // Initialize the form with react-hook-form and zod resolver
   const form = useForm<FormValues>({
@@ -76,11 +76,12 @@ export function ScheduleSessionForm({ partnerId, partnerName, language }: Schedu
     // Add the session to the context
     addSession(newSession)
 
-    // Show success toast
-    toast({
+    // Show success toast with our custom toast
+    showToast({
       title: "Session scheduled successfully",
       description: `Your ${language} session with ${partnerName} has been scheduled.`,
-      variant: "default",
+      duration: 5000,
+      variant: "success",
     })
 
     // Redirect to sessions page after a short delay
