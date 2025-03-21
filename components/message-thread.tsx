@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Send, Paperclip } from "lucide-react"
+import { Send } from "lucide-react"
 import { useMessages } from "./message-context"
 
 export function MessageThread() {
@@ -99,9 +99,6 @@ export function MessageThread() {
 
       <div className="p-4 border-t shrink-0">
         <form onSubmit={handleSendMessage} className="flex gap-2">
-          <Button type="button" size="icon" variant="ghost" className="shrink-0" aria-label="Attach file">
-            <Paperclip className="h-5 w-5" />
-          </Button>
           <Textarea
             placeholder="Type a message..."
             className="min-h-10 resize-none"
