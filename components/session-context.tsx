@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useContext, useState } from "react"
 
 interface Session {
   id: string
@@ -66,31 +66,9 @@ const initialPastSessions = [
 const SessionContext = createContext<SessionContextType | undefined>(undefined)
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
-  // Initialize state from localStorage if available, otherwise use initial data
-  const [upcomingSessions, setUpcomingSessions] = useState<Session[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("upcomingSessions")
-      return saved ? JSON.parse(saved) : initialUpcomingSessions
-    }
-    return initialUpcomingSessions
-  })
-
-  const [pastSessions, setPastSessions] = useState<Session[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("pastSessions")
-      return saved ? JSON.parse(saved) : initialPastSessions
-    }
-    return initialPastSessions
-  })
-
-  // Save to localStorage whenever state changes
-  useEffect(() => {
-    localStorage.setItem("upcomingSessions", JSON.stringify(upcomingSessions))
-  }, [upcomingSessions])
-
-  useEffect(() => {
-    localStorage.setItem("pastSessions", JSON.stringify(pastSessions))
-  }, [pastSessions])
+  // Initialize state with initial data - no localStorage
+  const [upcomingSessions, setUpcomingSessions] = useState<Session[]>(initialUpcomingSessions)
+  const [pastSessions] = useState<Session[]>(initialPastSessions)
 
   const addSession = (session: Omit<Session, "id">) => {
     const newSession = {

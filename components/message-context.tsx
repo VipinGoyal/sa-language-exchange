@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useState, useEffect, useCallback } from "react"
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react"
 
 interface Message {
   id: string
@@ -206,38 +206,10 @@ export function MessageProvider({
   children: React.ReactNode
   initialConversationId?: string
 }) {
-  // Initialize state from localStorage if available, otherwise use initial data
-  const [threads, setThreads] = useState<Record<string, Thread>>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("messageThreads")
-      return saved ? JSON.parse(saved) : initialThreads
-    }
-    return initialThreads
-  })
-
-  const [conversations, setConversations] = useState<Conversation[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("messageConversations")
-      const savedThreads = localStorage.getItem("messageThreads")
-      if (saved) {
-        return JSON.parse(saved)
-      } else if (savedThreads) {
-        return generateConversationsFromThreads(JSON.parse(savedThreads))
-      }
-    }
-    return generateConversationsFromThreads(initialThreads)
-  })
-
+  // Initialize state with default values - no localStorage
+  const [threads, setThreads] = useState<Record<string, Thread>>(initialThreads)
+  const [conversations, setConversations] = useState<Conversation[]>(generateConversationsFromThreads(initialThreads))
   const [activeConversationId, setActiveConversationId] = useState<string | null>(initialConversationId || null)
-
-  // Save to localStorage whenever state changes
-  useEffect(() => {
-    localStorage.setItem("messageThreads", JSON.stringify(threads))
-  }, [threads])
-
-  useEffect(() => {
-    localStorage.setItem("messageConversations", JSON.stringify(conversations))
-  }, [conversations])
 
   // Use useCallback to memoize the function references
   const markConversationAsRead = useCallback((conversationId: string) => {
@@ -318,20 +290,20 @@ export function MessageProvider({
     }
   }, [activeConversationId, markConversationAsRead])
 
-  return (
-    <MessageContext.Provider
-      value={{
-        conversations,
-        threads,
-        activeConversationId,
-        setActiveConversationId: setActiveConversationIdStable,
-        sendMessage,
-        markConversationAsRead,
-      }}
-    >
-      {children}
-    </MessageContext.Provider>
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(
+    () => ({
+      conversations,
+      threads,
+      activeConversationId,
+      setActiveConversationId: setActiveConversationIdStable,
+      sendMessage,
+      markConversationAsRead,
+    }),
+    [conversations, threads, activeConversationId, setActiveConversationIdStable, sendMessage, markConversationAsRead],
   )
+
+  return <MessageContext.Provider value={contextValue}>{children}</MessageContext.Provider>
 }
 
 export function useMessages() {

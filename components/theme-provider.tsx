@@ -1,16 +1,14 @@
 "use client"
 
 import { ThemeProvider as NextThemesProvider } from "next-themes"
-import type { ThemeProviderProps } from "next-themes/dist/types"
+import type { ThemeProviderProps } from "next-themes"
 import { useEffect } from "react"
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   // Ensure the dark class is applied to the html element when the theme changes
   useEffect(() => {
-    // Check for user preference
-    const isDarkMode =
-      localStorage.getItem("theme") === "dark" ||
-      (localStorage.getItem("theme") === null && window.matchMedia("(prefers-color-scheme: dark)").matches)
+    // Check for user preference using media query only
+    const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
 
     // Apply dark class based on user preference
     if (isDarkMode) {

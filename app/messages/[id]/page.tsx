@@ -1,21 +1,34 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { MessageList } from "@/components/message-list"
 import { MessageThread } from "@/components/message-thread"
 import { useMessages } from "@/components/message-context"
 
 export default function MessagePage({ params }: { params: { id: string } }) {
-  const { setActiveConversationId } = useMessages()
+  const { setActiveConversationId, threads } = useMessages()
+  const [isLoading, setIsLoading] = useState(true)
   const id = params.id
 
   // Set the active conversation ID when the page loads
-  // We don't need to call markConversationAsRead here as it's handled in the context
   useEffect(() => {
-    if (id) {
+    // Ensure the conversation exists before setting it as active
+    if (id && threads[id]) {
       setActiveConversationId(id)
+    } else if (Object.keys(threads).length > 0) {
+      // If the requested conversation doesn't exist, use the first available one
+      setActiveConversationId(Object.keys(threads)[0])
     }
-  }, [id, setActiveConversationId])
+    setIsLoading(false)
+  }, [id, threads, setActiveConversationId])
+
+  if (isLoading) {
+    return (
+      <div className="container py-6 flex items-center justify-center h-[calc(100vh-8rem)]">
+        <p className="text-muted-foreground">Loading conversation...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="container py-6 flex flex-col h-[calc(100vh-8rem)]">

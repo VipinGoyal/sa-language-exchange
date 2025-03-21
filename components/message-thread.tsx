@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -42,7 +41,7 @@ export function MessageThread() {
     })
   }
 
-  // Check if there's an active conversation
+  // Render a placeholder if there's no active conversation
   if (!activeConversationId || !threads[activeConversationId]) {
     return (
       <div className="flex items-center justify-center h-full">
